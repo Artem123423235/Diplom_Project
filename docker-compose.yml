@@ -1,0 +1,42 @@
+services:
+  db:
+    image: postgres:16
+    container_name: lms_db
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"          # наружу на 5433, чтобы не конфликтовать с habit_db
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  web:
+    build: .
+    container_name: lms_web
+    command: >
+      sh -c "until python manage.py migrate; do
+               echo 'DB not ready yet, retrying in 2s...';
+               sleep 2;
+             done &&
+             python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/app
+    ports:
+      - "8001:8000"
+    env_file:
+      - .env
+    environment:
+      DB_HOST: db          # ← перебиваем то, что в .env: внутри compose хост = имя сервиса
+      DB_PORT: 5432
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  postgres_data:

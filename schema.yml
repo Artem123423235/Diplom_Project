@@ -1,0 +1,3169 @@
+openapi: 3.0.3
+info:
+  title: Платформа самообучения API
+  version: 1.0.0
+  description: 'Дипломный проект: курсы, материалы, тесты, роли.'
+paths:
+  /api/attempts/:
+    get:
+      operationId: api_attempts_list
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: api_attempts_create
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          description: No response body
+  /api/attempts/{id}/:
+    get:
+      operationId: api_attempts_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+    put:
+      operationId: api_attempts_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+    patch:
+      operationId: api_attempts_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+    delete:
+      operationId: api_attempts_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/auth/logout/:
+    post:
+      operationId: api_auth_logout_create
+      description: |-
+        Takes a token and blacklists it. Must be used with the
+        `rest_framework_simplejwt.token_blacklist` app installed.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenBlacklistRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenBlacklistRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenBlacklistRequest'
+        required: true
+      responses:
+        '200':
+          description: No response body
+  /api/auth/me/:
+    get:
+      operationId: api_auth_me_retrieve
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+    patch:
+      operationId: api_auth_me_partial_update
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUserRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUserRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUserRequest'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+  /api/auth/register/:
+    post:
+      operationId: api_auth_register_create
+      description: POST /api/auth/register/ — открытая регистрация.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegisterRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserRegisterRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserRegisterRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserRegister'
+          description: ''
+  /api/auth/token/:
+    post:
+      operationId: api_auth_token_create
+      description: |-
+        Takes a set of user credentials and returns an access and refresh JSON web
+        token pair to prove the authentication of those credentials.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPairRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPairRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPairRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenObtainPair'
+          description: ''
+  /api/auth/token/refresh/:
+    post:
+      operationId: api_auth_token_refresh_create
+      description: |-
+        Takes a refresh type JSON web token and returns an access type JSON web
+        token if the refresh token is valid.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefreshRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRefreshRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenRefreshRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRefresh'
+          description: ''
+  /api/auth/token/verify/:
+    post:
+      operationId: api_auth_token_verify_create
+      description: |-
+        Takes a token and indicates if it is valid.  This view provides no
+        information about a token's fitness for a particular use.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenVerifyRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenVerifyRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenVerifyRequest'
+        required: true
+      responses:
+        '200':
+          description: No response body
+  /api/auth/users/:
+    get:
+      operationId: api_auth_users_list
+      description: GET /api/users/ — список пользователей, только для админа.
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedUserList'
+          description: ''
+  /api/courses/:
+    get:
+      operationId: api_courses_list
+      parameters:
+      - in: query
+        name: author
+        schema:
+          type: integer
+      - in: query
+        name: is_published
+        schema:
+          type: boolean
+      - in: query
+        name: level
+        schema:
+          type: string
+          title: Уровень
+          enum:
+          - advanced
+          - beginner
+          - intermediate
+        description: |-
+          * `beginner` - Начальный
+          * `intermediate` - Средний
+          * `advanced` - Продвинутый
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCourseListList'
+          description: ''
+    post:
+      operationId: api_courses_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CourseDetailRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CourseDetailRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CourseDetailRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseDetail'
+          description: ''
+  /api/courses/{course_id}/enroll/:
+    post:
+      operationId: api_courses_enroll_create
+      description: POST /api/courses/{id}/enroll/ — записаться на курс одним запросом.
+      parameters:
+      - in: path
+        name: course_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/courses/{id}/:
+    get:
+      operationId: api_courses_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Курс.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseDetail'
+          description: ''
+    put:
+      operationId: api_courses_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Курс.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CourseDetailRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CourseDetailRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CourseDetailRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseDetail'
+          description: ''
+    patch:
+      operationId: api_courses_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Курс.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCourseDetailRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCourseDetailRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCourseDetailRequest'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseDetail'
+          description: ''
+    delete:
+      operationId: api_courses_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Курс.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/enrollments/:
+    get:
+      operationId: api_enrollments_list
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedEnrollmentList'
+          description: ''
+    post:
+      operationId: api_enrollments_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EnrollmentRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EnrollmentRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EnrollmentRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Enrollment'
+          description: ''
+  /api/enrollments/{id}/:
+    get:
+      operationId: api_enrollments_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Enrollment'
+          description: ''
+    put:
+      operationId: api_enrollments_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EnrollmentRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EnrollmentRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EnrollmentRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Enrollment'
+          description: ''
+    patch:
+      operationId: api_enrollments_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedEnrollmentRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedEnrollmentRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedEnrollmentRequest'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Enrollment'
+          description: ''
+    delete:
+      operationId: api_enrollments_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/lessons/:
+    get:
+      operationId: api_lessons_list
+      parameters:
+      - in: query
+        name: module
+        schema:
+          type: integer
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedLessonList'
+          description: ''
+    post:
+      operationId: api_lessons_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LessonRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LessonRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LessonRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lesson'
+          description: ''
+  /api/lessons/{id}/:
+    get:
+      operationId: api_lessons_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Урок.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lesson'
+          description: ''
+    put:
+      operationId: api_lessons_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Урок.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LessonRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LessonRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LessonRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lesson'
+          description: ''
+    patch:
+      operationId: api_lessons_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Урок.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedLessonRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedLessonRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedLessonRequest'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lesson'
+          description: ''
+    delete:
+      operationId: api_lessons_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Урок.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/modules/:
+    get:
+      operationId: api_modules_list
+      parameters:
+      - in: query
+        name: course
+        schema:
+          type: integer
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedModuleList'
+          description: ''
+    post:
+      operationId: api_modules_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModuleRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ModuleRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ModuleRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Module'
+          description: ''
+  /api/modules/{id}/:
+    get:
+      operationId: api_modules_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Модуль.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Module'
+          description: ''
+    put:
+      operationId: api_modules_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Модуль.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModuleRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ModuleRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ModuleRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Module'
+          description: ''
+    patch:
+      operationId: api_modules_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Модуль.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedModuleRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedModuleRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedModuleRequest'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Module'
+          description: ''
+    delete:
+      operationId: api_modules_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Модуль.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/progress/:
+    get:
+      operationId: api_progress_list
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedProgressList'
+          description: ''
+    post:
+      operationId: api_progress_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProgressRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ProgressRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProgressRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Progress'
+          description: ''
+  /api/progress/{id}/:
+    get:
+      operationId: api_progress_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Progress'
+          description: ''
+    put:
+      operationId: api_progress_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProgressRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ProgressRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProgressRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Progress'
+          description: ''
+    patch:
+      operationId: api_progress_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedProgressRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedProgressRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedProgressRequest'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Progress'
+          description: ''
+    delete:
+      operationId: api_progress_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/progress/toggle/:
+    post:
+      operationId: api_progress_toggle_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProgressRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ProgressRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProgressRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Progress'
+          description: ''
+  /api/questions/:
+    get:
+      operationId: api_questions_list
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedQuestionList'
+          description: ''
+    post:
+      operationId: api_questions_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuestionRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/QuestionRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/QuestionRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Question'
+          description: ''
+  /api/questions/{id}/:
+    get:
+      operationId: api_questions_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Вопрос.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Question'
+          description: ''
+    put:
+      operationId: api_questions_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Вопрос.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuestionRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/QuestionRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/QuestionRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Question'
+          description: ''
+    patch:
+      operationId: api_questions_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Вопрос.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedQuestionRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedQuestionRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedQuestionRequest'
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Question'
+          description: ''
+    delete:
+      operationId: api_questions_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Вопрос.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '204':
+          description: No response body
+  /api/quizzes/:
+    get:
+      operationId: api_quizzes_list
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedQuizList'
+          description: ''
+    post:
+      operationId: api_quizzes_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuizRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/QuizRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/QuizRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quiz'
+          description: ''
+  /api/quizzes/{id}/:
+    get:
+      operationId: api_quizzes_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Тест.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quiz'
+          description: ''
+    put:
+      operationId: api_quizzes_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Тест.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuizRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/QuizRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/QuizRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quiz'
+          description: ''
+    patch:
+      operationId: api_quizzes_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Тест.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedQuizRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedQuizRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedQuizRequest'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quiz'
+          description: ''
+    delete:
+      operationId: api_quizzes_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Тест.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/quizzes/{id}/answer/:
+    post:
+      operationId: api_quizzes_answer_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Тест.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuizRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/QuizRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/QuizRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quiz'
+          description: ''
+  /api/quizzes/{id}/attempt/:
+    post:
+      operationId: api_quizzes_attempt_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Тест.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuizRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/QuizRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/QuizRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quiz'
+          description: ''
+  /api/quizzes/{id}/questions/:
+    get:
+      operationId: api_quizzes_questions_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Тест.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quiz'
+          description: ''
+  /api/quizzes/{id}/submit/:
+    post:
+      operationId: api_quizzes_submit_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Тест.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuizRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/QuizRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/QuizRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quiz'
+          description: ''
+  /api/v1/attempts/:
+    get:
+      operationId: api_v1_attempts_list
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: api_v1_attempts_create
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          description: No response body
+  /api/v1/attempts/{id}/:
+    get:
+      operationId: api_v1_attempts_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+    put:
+      operationId: api_v1_attempts_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+    patch:
+      operationId: api_v1_attempts_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+    delete:
+      operationId: api_v1_attempts_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/questions/:
+    get:
+      operationId: api_v1_questions_list
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedQuestionList'
+          description: ''
+    post:
+      operationId: api_v1_questions_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuestionRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/QuestionRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/QuestionRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Question'
+          description: ''
+  /api/v1/questions/{id}/:
+    get:
+      operationId: api_v1_questions_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Вопрос.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Question'
+          description: ''
+    put:
+      operationId: api_v1_questions_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Вопрос.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuestionRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/QuestionRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/QuestionRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Question'
+          description: ''
+    patch:
+      operationId: api_v1_questions_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Вопрос.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedQuestionRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedQuestionRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedQuestionRequest'
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Question'
+          description: ''
+    delete:
+      operationId: api_v1_questions_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Вопрос.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '204':
+          description: No response body
+  /api/v1/quizzes/:
+    get:
+      operationId: api_v1_quizzes_list
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedQuizList'
+          description: ''
+    post:
+      operationId: api_v1_quizzes_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuizRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/QuizRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/QuizRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quiz'
+          description: ''
+  /api/v1/quizzes/{id}/:
+    get:
+      operationId: api_v1_quizzes_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Тест.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quiz'
+          description: ''
+    put:
+      operationId: api_v1_quizzes_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Тест.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuizRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/QuizRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/QuizRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quiz'
+          description: ''
+    patch:
+      operationId: api_v1_quizzes_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Тест.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedQuizRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedQuizRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedQuizRequest'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quiz'
+          description: ''
+    delete:
+      operationId: api_v1_quizzes_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Тест.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/quizzes/{id}/answer/:
+    post:
+      operationId: api_v1_quizzes_answer_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Тест.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuizRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/QuizRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/QuizRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quiz'
+          description: ''
+  /api/v1/quizzes/{id}/attempt/:
+    post:
+      operationId: api_v1_quizzes_attempt_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Тест.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuizRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/QuizRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/QuizRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quiz'
+          description: ''
+  /api/v1/quizzes/{id}/questions/:
+    get:
+      operationId: api_v1_quizzes_questions_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Тест.
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quiz'
+          description: ''
+  /api/v1/quizzes/{id}/submit/:
+    post:
+      operationId: api_v1_quizzes_submit_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Тест.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuizRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/QuizRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/QuizRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quiz'
+          description: ''
+components:
+  schemas:
+    Answer:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        text:
+          type: string
+          title: Текст ответа
+          maxLength: 255
+      required:
+      - id
+      - text
+    AnswerRequest:
+      type: object
+      properties:
+        text:
+          type: string
+          minLength: 1
+          title: Текст ответа
+          maxLength: 255
+      required:
+      - text
+    CourseDetail:
+      type: object
+      description: Для /api/courses/{id}/ — с модулями и уроками.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          title: Название
+          maxLength: 200
+        description:
+          type: string
+          title: Описание
+        cover:
+          type: string
+          format: uri
+          nullable: true
+          title: Обложка
+        level:
+          allOf:
+          - $ref: '#/components/schemas/LevelEnum'
+          title: Уровень
+        is_published:
+          type: boolean
+          title: Опубликован
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Создан
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Обновлён
+        author:
+          type: integer
+          readOnly: true
+          title: Автор
+        author_name:
+          type: string
+          readOnly: true
+        modules:
+          type: array
+          items:
+            $ref: '#/components/schemas/ModuleWithLessons'
+          readOnly: true
+      required:
+      - author
+      - author_name
+      - created_at
+      - id
+      - modules
+      - title
+      - updated_at
+    CourseDetailRequest:
+      type: object
+      description: Для /api/courses/{id}/ — с модулями и уроками.
+      properties:
+        title:
+          type: string
+          minLength: 1
+          title: Название
+          maxLength: 200
+        description:
+          type: string
+          title: Описание
+        cover:
+          type: string
+          format: binary
+          nullable: true
+          title: Обложка
+        level:
+          allOf:
+          - $ref: '#/components/schemas/LevelEnum'
+          title: Уровень
+        is_published:
+          type: boolean
+          title: Опубликован
+      required:
+      - title
+    CourseList:
+      type: object
+      description: Для /api/courses/ — без вложений, только карточка.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          title: Название
+          maxLength: 200
+        description:
+          type: string
+          title: Описание
+        cover:
+          type: string
+          format: uri
+          nullable: true
+          title: Обложка
+        level:
+          allOf:
+          - $ref: '#/components/schemas/LevelEnum'
+          title: Уровень
+        is_published:
+          type: boolean
+          title: Опубликован
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Создан
+        author:
+          type: integer
+          readOnly: true
+          title: Автор
+        author_name:
+          type: string
+          readOnly: true
+      required:
+      - author
+      - author_name
+      - created_at
+      - id
+      - title
+    Enrollment:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        student:
+          type: integer
+          readOnly: true
+          title: Студент
+        student_email:
+          type: string
+          readOnly: true
+        course:
+          type: integer
+          title: Курс
+        course_title:
+          type: string
+          readOnly: true
+        enrolled_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Дата записи
+        is_active:
+          type: boolean
+          title: Активна
+        progress_percent:
+          type: number
+          format: double
+          readOnly: true
+      required:
+      - course
+      - course_title
+      - enrolled_at
+      - id
+      - progress_percent
+      - student
+      - student_email
+    EnrollmentRequest:
+      type: object
+      properties:
+        course:
+          type: integer
+          title: Курс
+        is_active:
+          type: boolean
+          title: Активна
+      required:
+      - course
+    Lesson:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        module:
+          type: integer
+          title: Модуль
+        title:
+          type: string
+          title: Название
+          maxLength: 200
+        content:
+          type: string
+          title: Содержание
+        video_url:
+          type: string
+          format: uri
+          title: Видео
+          maxLength: 200
+        order:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          default: 1
+          title: Порядок
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Создан
+      required:
+      - created_at
+      - id
+      - module
+      - title
+    LessonRequest:
+      type: object
+      properties:
+        module:
+          type: integer
+          title: Модуль
+        title:
+          type: string
+          minLength: 1
+          title: Название
+          maxLength: 200
+        content:
+          type: string
+          title: Содержание
+        video_url:
+          type: string
+          format: uri
+          title: Видео
+          maxLength: 200
+        order:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          default: 1
+          title: Порядок
+      required:
+      - module
+      - title
+    LessonShort:
+      type: object
+      description: Компактно — для вложения в Module при выдаче курса.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          title: Название
+          maxLength: 200
+        order:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Порядок
+      required:
+      - id
+      - title
+    LessonShortRequest:
+      type: object
+      description: Компактно — для вложения в Module при выдаче курса.
+      properties:
+        title:
+          type: string
+          minLength: 1
+          title: Название
+          maxLength: 200
+        order:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Порядок
+      required:
+      - title
+    LevelEnum:
+      enum:
+      - beginner
+      - intermediate
+      - advanced
+      type: string
+      description: |-
+        * `beginner` - Начальный
+        * `intermediate` - Средний
+        * `advanced` - Продвинутый
+    Module:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        course:
+          type: integer
+          title: Курс
+        title:
+          type: string
+          title: Название
+          maxLength: 200
+        description:
+          type: string
+          title: Описание
+        order:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          default: 1
+          title: Порядок
+      required:
+      - course
+      - id
+      - title
+    ModuleRequest:
+      type: object
+      properties:
+        course:
+          type: integer
+          title: Курс
+        title:
+          type: string
+          minLength: 1
+          title: Название
+          maxLength: 200
+        description:
+          type: string
+          title: Описание
+        order:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          default: 1
+          title: Порядок
+      required:
+      - course
+      - title
+    ModuleWithLessons:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          title: Название
+          maxLength: 200
+        description:
+          type: string
+          title: Описание
+        order:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Порядок
+        lessons:
+          type: array
+          items:
+            $ref: '#/components/schemas/LessonShort'
+          readOnly: true
+      required:
+      - id
+      - lessons
+      - title
+    ModuleWithLessonsRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          title: Название
+          maxLength: 200
+        description:
+          type: string
+          title: Описание
+        order:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Порядок
+      required:
+      - title
+    PaginatedCourseListList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/CourseList'
+    PaginatedEnrollmentList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Enrollment'
+    PaginatedLessonList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Lesson'
+    PaginatedModuleList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Module'
+    PaginatedProgressList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Progress'
+    PaginatedQuestionList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Question'
+    PaginatedQuizList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Quiz'
+    PaginatedUserList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+    PatchedCourseDetailRequest:
+      type: object
+      description: Для /api/courses/{id}/ — с модулями и уроками.
+      properties:
+        title:
+          type: string
+          minLength: 1
+          title: Название
+          maxLength: 200
+        description:
+          type: string
+          title: Описание
+        cover:
+          type: string
+          format: binary
+          nullable: true
+          title: Обложка
+        level:
+          allOf:
+          - $ref: '#/components/schemas/LevelEnum'
+          title: Уровень
+        is_published:
+          type: boolean
+          title: Опубликован
+    PatchedEnrollmentRequest:
+      type: object
+      properties:
+        course:
+          type: integer
+          title: Курс
+        is_active:
+          type: boolean
+          title: Активна
+    PatchedLessonRequest:
+      type: object
+      properties:
+        module:
+          type: integer
+          title: Модуль
+        title:
+          type: string
+          minLength: 1
+          title: Название
+          maxLength: 200
+        content:
+          type: string
+          title: Содержание
+        video_url:
+          type: string
+          format: uri
+          title: Видео
+          maxLength: 200
+        order:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          default: 1
+          title: Порядок
+    PatchedModuleRequest:
+      type: object
+      properties:
+        course:
+          type: integer
+          title: Курс
+        title:
+          type: string
+          minLength: 1
+          title: Название
+          maxLength: 200
+        description:
+          type: string
+          title: Описание
+        order:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          default: 1
+          title: Порядок
+    PatchedProgressRequest:
+      type: object
+      properties:
+        lesson:
+          type: integer
+          title: Урок
+        is_completed:
+          type: boolean
+          title: Пройден
+    PatchedQuestionRequest:
+      type: object
+      properties:
+        text:
+          type: string
+          minLength: 1
+          title: Текст вопроса
+    PatchedQuizRequest:
+      type: object
+      properties:
+        lesson:
+          type: integer
+          title: Урок
+        title:
+          type: string
+          minLength: 1
+          title: Название теста
+          maxLength: 255
+        pass_score:
+          type: integer
+          maximum: 100
+          minimum: 0
+          title: Проходной балл (%)
+    PatchedUserRequest:
+      type: object
+      description: Профиль пользователя. Роль менять через API нельзя — только через
+        админку.
+      properties:
+        username:
+          type: string
+          minLength: 1
+          title: Имя пользователя
+          description: Обязательное поле. Не более 150 символов. Только буквы, цифры
+            и символы @/./+/-/_.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          minLength: 1
+          maxLength: 254
+        full_name:
+          type: string
+          title: ФИО
+          maxLength: 150
+    Progress:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        student:
+          type: integer
+          readOnly: true
+          title: Студент
+        lesson:
+          type: integer
+          title: Урок
+        lesson_title:
+          type: string
+          readOnly: true
+        course_title:
+          type: string
+          readOnly: true
+        is_completed:
+          type: boolean
+          title: Пройден
+        completed_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+          title: Дата прохождения
+      required:
+      - completed_at
+      - course_title
+      - id
+      - lesson
+      - lesson_title
+      - student
+    ProgressRequest:
+      type: object
+      properties:
+        lesson:
+          type: integer
+          title: Урок
+        is_completed:
+          type: boolean
+          title: Пройден
+      required:
+      - lesson
+    Question:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        text:
+          type: string
+          title: Текст вопроса
+        answers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Answer'
+          readOnly: true
+      required:
+      - answers
+      - id
+      - text
+    QuestionRequest:
+      type: object
+      properties:
+        text:
+          type: string
+          minLength: 1
+          title: Текст вопроса
+      required:
+      - text
+    Quiz:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        lesson:
+          type: integer
+          title: Урок
+        title:
+          type: string
+          title: Название теста
+          maxLength: 255
+        pass_score:
+          type: integer
+          maximum: 100
+          minimum: 0
+          title: Проходной балл (%)
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Question'
+          readOnly: true
+      required:
+      - id
+      - lesson
+      - questions
+      - title
+    QuizRequest:
+      type: object
+      properties:
+        lesson:
+          type: integer
+          title: Урок
+        title:
+          type: string
+          minLength: 1
+          title: Название теста
+          maxLength: 255
+        pass_score:
+          type: integer
+          maximum: 100
+          minimum: 0
+          title: Проходной балл (%)
+      required:
+      - lesson
+      - title
+    RoleEnum:
+      enum:
+      - student
+      - teacher
+      - admin
+      type: string
+      description: |-
+        * `student` - Студент
+        * `teacher` - Преподаватель
+        * `admin` - Администратор
+    TokenBlacklistRequest:
+      type: object
+      properties:
+        refresh:
+          type: string
+          writeOnly: true
+          minLength: 1
+      required:
+      - refresh
+    TokenObtainPair:
+      type: object
+      properties:
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+          readOnly: true
+      required:
+      - access
+      - refresh
+    TokenObtainPairRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          writeOnly: true
+          minLength: 1
+        password:
+          type: string
+          writeOnly: true
+          minLength: 1
+      required:
+      - email
+      - password
+    TokenRefresh:
+      type: object
+      properties:
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+      required:
+      - access
+      - refresh
+    TokenRefreshRequest:
+      type: object
+      properties:
+        refresh:
+          type: string
+          minLength: 1
+      required:
+      - refresh
+    TokenVerifyRequest:
+      type: object
+      properties:
+        token:
+          type: string
+          writeOnly: true
+          minLength: 1
+      required:
+      - token
+    User:
+      type: object
+      description: Профиль пользователя. Роль менять через API нельзя — только через
+        админку.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          title: Имя пользователя
+          description: Обязательное поле. Не более 150 символов. Только буквы, цифры
+            и символы @/./+/-/_.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        full_name:
+          type: string
+          title: ФИО
+          maxLength: 150
+        role:
+          allOf:
+          - $ref: '#/components/schemas/RoleEnum'
+          readOnly: true
+          title: Роль
+        date_joined:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Дата регистрации
+        last_login:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+          title: Последний вход
+      required:
+      - date_joined
+      - email
+      - id
+      - last_login
+      - role
+      - username
+    UserRegister:
+      type: object
+      description: Регистрация. Пароль валидируется django-валидаторами.
+      properties:
+        username:
+          type: string
+          title: Имя пользователя
+          description: Обязательное поле. Не более 150 символов. Только буквы, цифры
+            и символы @/./+/-/_.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        full_name:
+          type: string
+          title: ФИО
+          maxLength: 150
+      required:
+      - email
+      - username
+    UserRegisterRequest:
+      type: object
+      description: Регистрация. Пароль валидируется django-валидаторами.
+      properties:
+        username:
+          type: string
+          minLength: 1
+          title: Имя пользователя
+          description: Обязательное поле. Не более 150 символов. Только буквы, цифры
+            и символы @/./+/-/_.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          minLength: 1
+          maxLength: 254
+        full_name:
+          type: string
+          title: ФИО
+          maxLength: 150
+        password:
+          type: string
+          writeOnly: true
+          minLength: 1
+        password2:
+          type: string
+          writeOnly: true
+          minLength: 1
+      required:
+      - email
+      - password
+      - password2
+      - username
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
